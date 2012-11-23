@@ -11,9 +11,10 @@ cc="icc"
 
 SDIR="${HOME}/code/tmLQCD.kost"
 BDIR="/lustre/fs4/group/etmc/kostrzew/tmLQCD_builds/auto"
-HMCDIR="${HOME}/tmLQCD/execs/hmc_tm_IHS"
-INVDIR="${HOME}/tmLQCD/execs/invert_IHS"
-BENCHDIR="${HOME}/tmLQCD/exec/benchmark_IHS"
+EDIR="${HOME}/tmLQCD/execs/"
+HMCDIR="${EDIR}/hmc_tm_IHS"
+INVDIR="${EDIR}/invert_IHS"
+BENCHDIR="${EDIR}/benchmark_IHS"
 
 if [[ ! -d ${HMCDIR} ]]; then
   mkdir -p ${HMCDIR}
