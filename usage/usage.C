@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  printf("%lf %lf %lf %ld %ld %ld\n",etmc_size,nic_size,other_size,etmc_fcount,nic_fcount,other_fcount);
+  printf("%lf %lf %lf %lu %lu %lu\n",etmc_size,nic_size,other_size,etmc_fcount,nic_fcount,other_fcount);
 
   return(0);
 }
