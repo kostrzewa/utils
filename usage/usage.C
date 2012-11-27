@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
   struct stat fstat;
   
   while(findlist >> line) {
-    stat(line.c_str(),&fstat);
+    lstat(line.c_str(),&fstat);
     if( S_ISREG(fstat.st_mode) ) {
         if( fstat.st_gid == gid_etmc ) {
           etmc_size += 1.0e-12*(double)fstat.st_size;
