@@ -9,12 +9,14 @@ cflags="-std=c99 -axSSE4.2 -O3 -c99"
 ldflags=""
 cc="icc"
 
+ADDON="RAN"
+
 SDIR="${HOME}/code/tmLQCD.kost"
 BDIR="/lustre/fs4/group/etmc/kostrzew/tmLQCD_builds/auto"
 EDIR="${HOME}/tmLQCD/execs/"
-HMCDIR="${EDIR}/hmc_tm_IHS"
-INVDIR="${EDIR}/invert_IHS"
-BENCHDIR="${EDIR}/benchmark_IHS"
+HMCDIR="${EDIR}/hmc_tm_${ADDON}"
+INVDIR="${EDIR}/invert_${ADDON}"
+BENCHDIR="${EDIR}/benchmark_${ADDON}"
 
 if [[ ! -d ${HMCDIR} ]]; then
   mkdir -p ${HMCDIR}
