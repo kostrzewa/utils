@@ -20,6 +20,8 @@ unsigned long int etmc_fcount = 0;
 unsigned long int nic_fcount = 0;
 unsigned long int other_fcount = 0;
 
+unsigned long int line_count = 0;
+
 int main(int argc, char* argv[]) {
   if( argc < 2 ) {
     printf("USAGE:\n");
@@ -32,8 +34,23 @@ int main(int argc, char* argv[]) {
   std::ifstream findlist(argv[1]);
 
   struct stat fstat;
+
+  double percent_done = 0.0;
+ 
+  std::ifstream::pos_type start_of_data = findlist.tellg();
+  findlist.seekg(0, std::ios::end);
+  std::ifstream::pos_type end_of_data = findlist.tellg();
+  findlist.seekg(start_of_data);
+
+  std::ifstream::pos_type curr_point_in_data;
   
   while(findlist >> line) {
+    ++line_count;
+    if( line_count % 1000 == 0 ) {
+      percent_done = static_cast<double>(findlist.tellg()) * 100 / static_cast<double>(end_of_data);
+      fprintf(stderr,"Percent done: %6.2lf \% \r",percent_done);
+      fflush(stderr);
+    }
     lstat(line.c_str(),&fstat);
     if( S_ISREG(fstat.st_mode) ) {
         if( fstat.st_gid == gid_etmc ) {
@@ -47,7 +64,7 @@ int main(int argc, char* argv[]) {
           ++other_fcount;
         }
 #ifdef DEBUG
-      printf("Filename: %s, Size: %lf, Gid: %d, Attbs: %ud \n",line.c_str(),(double)fstat.st_size,fstat.st_gid,fstat.st_mode);
+      printf("\nFilename: %s, Size: %lf, Gid: %d, Attbs: %ud \n",line.c_str(),(double)fstat.st_size,fstat.st_gid,fstat.st_mode);
 #endif
     }
   }
