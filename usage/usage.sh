@@ -8,7 +8,12 @@ if [[ -z ${1} ]]; then
   exit 0
 fi
 
-touch usage.txt
+if [[ -e usage.txt ]]; then
+  rm usage.txt
+fi
+
+# write a header
+echo " dirname etmc(TB) nic(TB) other(TB) etmc(files) nic(files) other(files)" > usage.txt
 
 PWD=`pwd`
 
