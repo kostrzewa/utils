@@ -2,8 +2,8 @@
 
 if [[ -z ${1} || -z ${2} ]]; then
   echo "USAGE:"
-  echo "  sh usage.sh DIRECTORY REFIND_FLAG [0,1]"
-  echo "  REFIND_FLAG indicates (1) whether find should be run on subdirectories to (re)create findlist_*.txt's"
+  echo "  sh usage.sh DIRECTORY REFIND_FLAG"
+  echo "  REFIND_FLAG indicates [0,1] whether find should be run on subdirectories to (re)create findlist_*.txt's"
   exit 0
 fi
 
