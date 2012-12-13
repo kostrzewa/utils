@@ -1,13 +1,32 @@
+# This file is part of the "usage" utility for analysing disk usage
+# on a per directory level and attributing it to a unix group 
+
+#   Copyright (C) 2012  Bartosz Kostrzewa
+
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #!/bin/bash
 
 if [[ ${1} = *-help* || -z ${1} ]]; then
   echo "USAGE:"
   echo "  sh usage.sh directory [REFIND_FLAG]"
   echo "  REFIND_FLAG indicates [1] whether find should be run on subdirectories to recreate findlist_*.txt's"
-  echo "  usage.sh will descend into all subdirectories of the present working directory if no directory is specified"
-  echo "  otherwise all subdirectorie of the specified directory are scanned"
+  echo "  all subdirectorie of the specified directory are scanned"
   echo "  if findlist_\$subdirectory.txt cannot be found (where subdirectory is the name of a given subdirectory"
-  echo "  inside the directory, find will be called on that subdirectory"
+  echo "  inside the directory) find will be called on that subdirectory"
+  echo "     Copyright (C) 2012 Bartosz Kostrzewa "
   exit 0
 fi
 
