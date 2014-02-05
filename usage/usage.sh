@@ -33,13 +33,15 @@ fi
 if [[ ${1} = "." ]]; then
   WD=`pwd`
 elif [[ ${1} = ".." ]]; then
-  echo "  usage.sh cannot be called with "${1}" as an argument!"
-  exit 1
+  WD="`pwd`/.."
 else
   WD=${1}
 fi
 
 WD_name=`echo ${WD} | sed 's/\//_/g'`
+
+# call kinit to make sure we have an AFS token
+kinit -r 604800
 
 # write a header
 echo " dirname etmc(TB) nic(TB) other(TB) etmc(files) nic(files) other(files)" > usage_${WD_name}.txt
@@ -56,12 +58,14 @@ for i in `ls -1 ${WD}`; do
   if [[ -d ${fullpath} ]]; then 
     if [[ ! -e findlist_${WD_name}_${i}.txt || ${2} -eq 1 ]]; then
       echo "Calling find for ${i}"
-      find ${WD}/${i} > findlist_${WD_name}_${i}.txt
+      find ${WD}/${i} -type f -fprint findlist_${WD_name}_${i}.txt
     fi
     echo "Calling usage for ${i}"
     usage_out=`$HOME/code/utils/usage/usage findlist_${WD_name}_${i}.txt`
     echo ${WD}/${i} ${usage_out} >> usage_${WD_name}.txt
   fi
+  # refresh our AFS token
+  kinit -R
 done
 
 # finally, we also call it on ${WD} itself
@@ -69,7 +73,7 @@ done
 if [[ -d ${WD} ]]; then
   if [[ ! -e findlist_${WD_name}.txt || ${2} -eq 1 ]]; then
     echo "Calling ls for ${WD}"
-    find ${WD} -maxdepth 1 > findlist_${WD_name}.txt
+    find ${WD} -maxdepth 1 -type f -fprint findlist_${WD_name}.txt
   fi
   echo "Calling usage for ${WD}"
   usage_out=`$HOME/code/utils/usage/usage findlist_${WD_name}.txt`
