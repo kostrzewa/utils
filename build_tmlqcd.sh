@@ -1,23 +1,29 @@
 #!/bin/sh
 
 versions="4D_MPI_hs 3D_MPI_hs 2D_MPI_hs 1D_MPI_hs 4D_hybrid_hs 3D_hybrid_hs 2D_hybrid_hs 1D_hybrid_hs openmp serial"
-ADDON="icc_mvapich2_unstable_lemon_5.2.0"
+ADDON="icc_openmpi_lemon"
 
-# newlemon, oldlemon
-LEMONVER="unstable_lemon"
 # gcc, icc
 COMP="icc"
 # openmpi, mvapich2
-MPI="mvapich2"
+MPI="openmpi"
 
+# where the sources are located
 SDIR="${HOME}/code/tmLQCD.kost"
-BDIR="/lustre/fs4/group/etmc/kostrzew/tmLQCD_builds/auto"
-EDIR="${HOME}/tmLQCD/execs/"
+# where the build directories will be
+BDIR="/lustre/fs17/group/etmc/kostrzew/build/pax/tmLQCD"
+# the executables will be copied here after they are compiled
+EDIR="/lustre/fs17/group/etmc/kostrzew/execs/pax/tmLQCD"
+# these sub-directories will contain the various executables for hmc, inverter and benchmark
 HMCDIR="${EDIR}/hmc_tm_${ADDON}"
 INVDIR="${EDIR}/invert_${ADDON}"
 BENCHDIR="${EDIR}/benchmark_${ADDON}"
 
-commonflags="--enable-gaugecopy --disable-p4 --enable-alignment=32 --without-gprof --with-lapack=-llapack --with-limedir=/afs/ifh.de/user/k/kostrzew/local64"
+# this will be modified further below
+LEMONDIR="--with-lemondir=/afs/ifh.de/user/k/kostrzew/local64_pax/lemon"
+
+
+commonflags="--enable-gaugecopy --disable-p4 --enable-alignment=32 --without-gprof --with-lapack=-L/usr/lib64/atlas --with-limedir=/afs/ifh.de/user/k/kostrzew/local64_pax/lime_icc"
 mpiflags=""
 openmpflags=""
 hsflag=""
@@ -42,14 +48,7 @@ fi
 # make sure configure is up to date
 (cd ${SDIR} && autoconf)
 
-if [[ $LEMONVER == "oldlemon" ]]; then
-  LEMONDIR="--with-lemondir=/afs/ifh.de/user/k/kostrzew/code/old_lemon/"
-elif [[ $LEMONVER == "newlemon" ]]; then
-  LEMONDIR="--with-lemondir=/afs/ifh.de/user/k/kostrzew/code/new_lemon/"
-else
-  LEMONDIR="--with-lemondir=/afs/ifh.de/user/k/kostrzew/code/unstable_lemon/"
-fi
-
+# configure compiler paths and flags
 if [[ $COMP == "icc" ]]; then
   echo "using the Intel compiler 2013"
   sseflags="--disable-sse2 --disable-sse3"
@@ -58,12 +57,12 @@ if [[ $COMP == "icc" ]]; then
     echo "linking against mvapich2"
     eval `modulecmd sh add mvapich2-x86_64-intel`
     ccpath="/usr/lib64/mvapich2-intel/bin/"
-    LEMONDIR="${LEMONDIR}install_icc_mvapich2"
+    LEMONDIR="${LEMONDIR}_icc_mvapich2"
   elif [[ $MPI == "openmpi" ]]; then
     echo "linking against openmpi"
     eval `modulecmd sh add openmpi-x86_64-intel`
     ccpath="/usr/lib64/openmpi-intel/bin/"
-    LEMONDIR="${LEMONDIR}install_icc_openmpi"
+    LEMONDIR="${LEMONDIR}_icc_openmpi"
   else 
     echo "no MPI library specified in MPI variable, exiting (openmpi/mvapich2)"
     exit 1
@@ -77,12 +76,12 @@ elif [[ $COMP = "gcc" ]]; then
     echo "linking against mvapich2"
     eval `modulecmd sh add mvapich2-x86_64`
     ccpath="/usr/lib64/mvapich2/bin/"
-    LEMONDIR="${LEMONDIR}install_gcc_mvapich2"
+    LEMONDIR="${LEMONDIR}_gcc_mvapich2"
   elif [[ $MPI == "openmpi" ]]; then
     echo "linking against openmpi"
     eval `modulecmd sh add openmpi-x86_64`
     ccpath="/usr/lib64/openmpi/bin/"
-    LEMONDIR="${LEMONDIR}install_gcc_openmpi"
+    LEMONDIR="${LEMONDIR}_gcc_openmpi"
   else
     echo "no MPI library specified in MPI variable, exiting (openmpi/mvapich2)"
   fi
@@ -91,11 +90,12 @@ else
   exit 2
 fi
 
+# do the compilations for the different versions
 for i in ${versions}; do
   cc=""
   ldflags=""
   if [[ $COMP = "icc" ]]; then
-    cflags="-std=c99 -axSSE4.2 -O3"
+    cflags="-std=c99 -march=corei7 -O3"
   else
     cflags="-std=c99 -O3 -mtune=core2"
   fi
@@ -163,7 +163,9 @@ for i in ${versions}; do
   esac
   
   echo "executing configure for $i" &&
+  echo "CFLAGS=${cflags} LDFLAGS=${ldflags} CC=${cc} ${SDIR}/configure ${commonflags} ${mpiflags} ${openmpflags} ${hsflag} ${sseflags}"
   CFLAGS="${cflags}" LDFLAGS="${ldflags}" CC="${cc}" ${SDIR}/configure ${commonflags} ${mpiflags} ${openmpflags} ${hsflag} ${sseflags} &&
+
   echo "beginning compilation for $i" &&
   make -j9 &&
   cp hmc_tm ${HMCDIR}/${i} &&
