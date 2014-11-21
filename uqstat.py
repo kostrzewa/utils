@@ -4,15 +4,26 @@
 
 import xml.dom.minidom
 import os
-import sys
+import sys, getopt
 import string
 import pwd
 
+all_users=[]
+
+opts, args = getopt.getopt(sys.argv,"a")
+
+for arg in args:
+  if arg == '-a':
+    all_users=1
+   
 def get_username():
   return pwd.getpwuid( os.getuid() )[ 0 ]
 
-# get jobs by current user in xml format
-f=os.popen('qstat -u ' + get_username() + ' -xml -r')
+if all_users:
+  f=os.popen('qstat -xml -r')
+else:
+  # get jobs by current user in xml format
+  f=os.popen('qstat -xml -r -u ' + get_username() )
 
 dom=xml.dom.minidom.parse(f)
 
@@ -31,11 +42,17 @@ def fakeqstat(joblist):
     jobstate=r.getElementsByTagName('state')[0].childNodes[0].data
     jobnum=r.getElementsByTagName('JB_job_number')[0].childNodes[0].data
     jobpe="1"
+    pename=""
+    queuename=""
     # for jobs in the standard queue there is no PE request by default, so we need to test
     # if this tag exists
     temp=r.getElementsByTagName('requested_pe')
     if temp:
       jobpe=temp[0].childNodes[0].data
-    print  jobnum.ljust(8), ' ', jobstate.ljust(4), ' ', jobpe.ljust(4) ,' ', jobown, ' ', jobname.ljust(100)
+      pename=temp[0].attributes["name"].value
+    temp=r.getElementsByTagName('queue_name')
+    #if jobstate == 'r' or jobstate == 'Rr' :
+    #  queuename=temp[0].childNodes[0].data
+    print  jobnum.ljust(8), ' ', jobstate.ljust(4), ' ', pename.ljust(4), ' ', jobpe.ljust(4) , ' ', jobown.ljust(8), ' ', jobname.ljust(86)
 
 fakeqstat(runjobs)
