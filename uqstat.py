@@ -36,6 +36,7 @@ runjobs=run.getElementsByTagName('job_list')
 #print dom.toxml()
 
 def fakeqstat(joblist):
+  cores=0
   for r in joblist:
     jobname=r.getElementsByTagName('JB_name')[0].childNodes[0].data
     jobown=r.getElementsByTagName('JB_owner')[0].childNodes[0].data
@@ -51,8 +52,10 @@ def fakeqstat(joblist):
       jobpe=temp[0].childNodes[0].data
       pename=temp[0].attributes["name"].value
     temp=r.getElementsByTagName('queue_name')
-    #if jobstate == 'r' or jobstate == 'Rr' :
-    #  queuename=temp[0].childNodes[0].data
+    if jobstate == 'r' or jobstate == 'Rr' :
+      cores = int(cores) + int(jobpe)
     print  jobnum.ljust(8), ' ', jobstate.ljust(4), ' ', pename.ljust(4), ' ', jobpe.ljust(4) , ' ', jobown.ljust(8), ' ', jobname.ljust(86)
+  print "Cores in use: ", cores
+
 
 fakeqstat(runjobs)
