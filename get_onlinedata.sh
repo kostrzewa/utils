@@ -38,6 +38,8 @@ putonlinetogether() {
   putonlinetogether.sh
 }
 
+updated=""
+
 # traverse all subdirectories
 for i in `find .`; do
   if [ -d $i ]; then 
@@ -51,13 +53,16 @@ for i in `find .`; do
       if [ -e piononline.dat ]; then
         if [ $lastepoch -gt `stat -c %Y piononline.dat` ]; then
           putonlinetogether
+          updated="$updated\n$i"
         fi
       else
         # if there is no piononline.dat, create it!
         putonlinetogether
+        updated="$updated\n$i"
       fi
     fi
     cd $SDIR
   fi
 done
 
+echo -e $updated
