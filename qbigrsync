@@ -1,0 +1,23 @@
+#!/bin/bash
+# rsync to and from qbig through bngw
+
+usage() {
+  echo "usage: qbigrsync <f,t> <from_file> <to_dir>"
+  echo "you can enclose <from_file> in double quotes if you wish to use globs" 
+  exit 1
+}
+
+if test -z "${1}" -o -z "${2}"; then
+  usage
+fi
+
+if test "${1}" = "f"; then
+  rsync -av --progress -e "ssh bartek@gateway.cb.uni-bonn.de ssh" bartek@qbig:${2} ${3}
+elif test "${1}" = "t"; then
+  rsync -av --progress -e "ssh bartek@gateway.cb.uni-bonn.de ssh" ${2} bartek@qbig:${3}
+else
+  echo "!! unknown argument: " ${1}
+  usage
+fi
+
+ 
