@@ -1,0 +1,9 @@
+#!/bin/bash
+
+allnodes=$( pbsnodes -a | grep "state =" | wc | awk '{ print $1 }' )
+freenodes=$( pbsnodes -a | grep "state = free" | wc | awk '{ print $1 }' )
+jobnodes=$( pbsnodes -a | grep "state = job" | wc | awk '{ print $1 }' )
+downnodes=$( pbsnodes -a | grep "state = down" | wc | awk '{ print $1}' )
+downnodes=$(( $downnodes + $( pbsnodes -a | grep "state = offline" | wc | awk '{ print $1}' ) ))
+
+echo "free: $freenodes, running jobs: $jobnodes, down: $downnodes, total: $allnodes, naive total: $(( $downnodes + $jobnodes + $freenodes ))"
