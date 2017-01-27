@@ -26,4 +26,5 @@ grep eigenvalue $outfile | grep computation | awk '{print $2 " " $7}' | sed "s/:
 # ddalphamg setup
 echo "monomial time" > ddalphaamg_setup_time.dat
 grep "setup ran" $outfile | awk '{print $1 " " $5}' >> ddalphaamg_setup_time.dat
+grep "next coarser" $outfile | awk '{print "DDalphaAMG " $11}' >> ddalphaamg_setup_time.dat
 
