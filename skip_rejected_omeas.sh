@@ -1,11 +1,9 @@
 #!/bin/bash
 
-if [ -z $1 ]; then
-  echo "usage: ./remix.sh <acc.txt>"
-  exit 1
-fi
+filename=acc.txt
 
-filename=$1
+awk '{print $1 " " $(NF-2)}' output.data > acc.txt
+
 while read -r -a line; do 
   acc=${line[1]}
   # remove leading zeroes
