@@ -7,6 +7,10 @@ fi
 
 outfile=$1
 
+# count how many trajectories were done
+echo "ntraj" > ntraj.dat
+grep Trajectory ${outfile} | grep accepted | wc | awk '{print $1}' >> ntraj.dat
+
 # acceptance step
 echo "monomial time" > accept_time.dat
 grep Time $outfile | grep acc | awk '{print $4 " " $8}' >> accept_time.dat 
