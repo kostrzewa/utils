@@ -1,0 +1,58 @@
+L=24
+T=48
+
+NrXProcs = 4
+NrYProcs = 4
+NrZprocs = 4
+ompnumthreads=1
+
+Measurements = 1
+
+seed=9081021
+
+InitialStoreCounter = 54
+NSave = 2
+
+2KappaMu = 0.001120516
+CSW = 1.74
+kappa = 0.1400645
+ThetaT = 1.0
+UseEvenOdd = no
+userelativeprecision=yes
+
+# for the beginning 3 is fine, afterwards run with 2 because 3 slows down progress by about 10%!
+# DebugLevel = 5
+DebugLevel = 2
+
+SourceType = Volume
+ReadSource = no
+NoSamples = 2
+
+BeginDDalphaAMG
+  MGBlockT = MGBT
+  MGBlockX = 3
+  MGBlockY = 3
+  MGBlockZ = 3
+  MGSetupIter = ITERS
+  MGCoarseSetupIter = 3
+  MGNumberOfVectors = NVEC
+  MGNumberOfLevels = NLEVEL
+  MGCoarseMuFactor = MUCOARSE
+  MGMixedPrecision = no
+  MGUpdateSetupIter = 0
+EndDDalphaAMG
+
+ReproduceRandomNumbers = no
+RanluxdLevel = 2
+
+BeginOperator CLOVER
+  CSW = 1.74
+  kappa = 0.1400645
+  2KappaMu = 0.001120516
+  solver = ddalphaamg
+  SolverPrecision = 1e-18
+  MaxSolverIterations = 70000
+  propagatorprecision = 32
+  useevenodd = no
+EndOperator
+

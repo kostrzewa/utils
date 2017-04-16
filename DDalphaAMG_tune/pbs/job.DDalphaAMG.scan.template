@@ -1,0 +1,19 @@
+
+RUNDIR=WDIR
+ODIR=${RUNDIR}/outputs
+
+if [ ! -d ${ODIR} ]; then
+  mkdir -p ${ODIR}
+  mkdir ${ODIR}
+fi
+
+cd ${RUNDIR}
+
+#launch
+ofile=${ODIR}/ndsNODES_itersITERS_nlevelNLEVEL_nvecNVEC_mucoarseMUCOARSE.out
+
+date > $ofile
+${MPIRUN} ${EFILE} -f invert.input 2>&1 | tee -a ${ofile}
+date >> ${ofile}
+
+rm -f *.inverted
