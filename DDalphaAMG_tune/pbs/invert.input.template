@@ -50,7 +50,7 @@ BeginOperator CLOVER
   kappa = 0.1400645
   2KappaMu = 0.001120516
   solver = ddalphaamg
-  SolverPrecision = 1e-18
+  SolverPrecision = 1e-10
   MaxSolverIterations = 70000
   propagatorprecision = 32
   useevenodd = no

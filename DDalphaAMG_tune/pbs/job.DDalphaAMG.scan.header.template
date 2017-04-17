@@ -9,13 +9,13 @@
 #$ -j y
 #$ -m bae
 # queue name and number of cores
-#$ -pe pax9 256
+#$ -pe pax10 256
 
 # number of mpi processes
 NPROCS=256
 
-source /usr/local/bin/intel-setup-2015.sh intel64
-EFILE=/lustre/fs17/group/etmc/kostrzew/build/pax/tmLQCD/DDalphaAMG_nd/4D_MPI_hs_mvapich_intel2017/invert
+source /usr/local/bin/intel-setup-2017.sh intel64
+EFILE=/lustre/fs17/group/etmc/kostrzew/build/pax/tmLQCD/DDalphaAMG/4D_MPI_hs_openmpi_intel2017/invert
 
-MPIRUN="/usr/lib64/mvapich2-intel/bin/mpirun -n 256"
+MPIRUN="/usr/lib64/openmpi-intel/bin/mpirun -n 256 -x LD_LIBRARY_PATH"
 
