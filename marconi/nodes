@@ -1,9 +1,27 @@
 #!/bin/bash
 
-allnodes=$( pbsnodes -a | grep "state =" | wc | awk '{ print $1 }' )
-freenodes=$( pbsnodes -a | grep "state = free" | wc | awk '{ print $1 }' )
-jobnodes=$( pbsnodes -a | grep "state = job" | wc | awk '{ print $1 }' )
-downnodes=$( pbsnodes -a | grep "state = down" | wc | awk '{ print $1}' )
-downnodes=$(( $downnodes + $( pbsnodes -a | grep "state = offline" | wc | awk '{ print $1}' ) ))
+knl=""
+if [ "$1" = "k1" ]; then
+  knl="-s knl1"
+fi
+if [ "$1" = "k2" ]; then
+  knl="-s knl2"
+fi
 
-echo "free: $freenodes, running jobs: $jobnodes, down: $downnodes, total: $allnodes, naive total: $(( $downnodes + $jobnodes + $freenodes ))"
+allnodes=$( pbsnodes -a ${knl} | grep "state =" | wc | awk '{ print $1 }' )
+jobnodes=$( pbsnodes -a ${knl} | grep "jobs" | wc | awk '{ print $1 }' )
+downnodes=$( pbsnodes -a ${knl} | grep "state = down" | wc | awk '{ print $1}' )
+downnodes=$(( $downnodes + $( pbsnodes -a ${knl} | grep "state = offline" | wc | awk '{ print $1}' ) ))
+
+echo "free: $(( $allnodes - $downnodes - $jobnodes )), running jobs: $jobnodes, down: $downnodes, total: $allnodes"
+
+if [ ! -z "$1" ]; then
+  cachenodes=$( pbsnodes -a ${knl} | grep "mcdram = cache" | wc | awk '{ print $1 }' )
+  flatnodes=$( pbsnodes -a ${knl} | grep "mcdram = flat" | wc | awk '{print $1}' )
+  quadrantnodes=$( pbsnodes -a ${knl} | grep "numa = quadrant" | wc | awk '{print $1}' ) 
+  heminodes=$( pbsnodes -a ${knl} | grep "numa = hemisphere" | wc | awk '{print $1}' ) 
+  snc2nodes=$( pbsnodes -a ${knl} | grep "numa = snc2" | wc | awk '{print $1}' ) 
+  snc4nodes=$( pbsnodes -a ${knl} | grep "numa = snc4" | wc | awk '{print $1}' ) 
+
+  echo "cache: $cachenodes flat: $flatnodes quadrant: $quadrantnodes hemisphere: $heminodes snc2: $snc2nodes snc4: $snc4nodes"
+fi
