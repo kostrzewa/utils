@@ -32,3 +32,6 @@ echo "monomial time" > ddalphaamg_setup_time.dat
 grep "setup ran" $outfile | awk '{print $1 " " $5}' >> ddalphaamg_setup_time.dat
 grep "next coarser" $outfile | awk '{print "DDalphaAMG " $11}' >> ddalphaamg_setup_time.dat
 
+# qphix packing overheads
+echo "monomial time" > qphix_packing_time.dat
+grep "time spent in reorder" $outfile | awk '{print "QPhiX_overhead " $(NF-1)}' >> qphix_packing_time.dat
