@@ -1,9 +1,11 @@
+#!/usr/bin/env Rscript
 require(dplyr)
+args <- commandArgs(trailingOnly = TRUE)
+if( length(args) < 2 ){
+  stop("usage: Rscript combine_output_data.R <replica_b_name> <replica_a_name>")
+}
 
-prefix <- "cB211"
-suffix <- "25.24"
-
-replicas <- sprintf("%s%s.%s", prefix, c("b","a"), suffix)
+replicas <- args
 
 odat <- NULL
 for( rep_idx in 1:length(replicas) ){
